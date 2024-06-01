@@ -1,10 +1,10 @@
 # Using data compression with AWS Lambda functions
 
 This sample illustrates using data compression with Lambda functions to 
-1. Potentially save on data transfer costs when using Lambda functions with NAT Gateway or VPC Endpoints
-2. Receive and return payloads larger than the Lambda limit of 6MB. 
+1. Receive and return payloads larger than the Lambda limit of 6MB. 
+2. Potentially save on data transfer costs when using Lambda functions with NAT Gateway or VPC Endpoints
 
-> Important: this sample uses various AWS services and there are costs associated with these services after the Free Tier usage - please see the [AWS Pricing page](https://aws.amazon.com/pricing/) for details. You are responsible for any AWS costs incurred. No warranty is implied in this example.
+> Important: this sample uses various AWS services and there are costs associated with these services after the Free Tier usage - please see the [AWS Pricing page](https://aws.amazon.com/pricing/) for details. You are fully responsible for any AWS costs incurred. No warranty is implied in this example.
 
 ## How does it work
 
@@ -16,7 +16,7 @@ While the Invoke API does not provide native compression support, you can easily
 
 In the sample code, a 1MB JSON payload is generated in function handler, compressed, returned via Function URL, and decompressed on the client side by a supporting client, such as Postman, back to its original form and length. 
 
-See results using Postman, or similar tool. A 1MB plain text JSON payload is returned as a 200KB compressed payload. 
+See results using Postman, or similar tool. A 1MB plain text JSON payload is returned as a ~220KB compressed payload. 
 
 ![](postmanresult.png)
 
@@ -36,7 +36,7 @@ Both NAT Gateway and VPC Endpoint are priced per GB of data processed, so reduci
 * NAT Gateway cost (per GB) - $0.045 [(pricing)](https://aws.amazon.com/vpc/pricing/)
 * VPC Endpoint cost (per GB) - $0.010 [(pricing)](https://aws.amazon.com/privatelink/pricing/).
 * Tested with different randomly generated JSON payload sizes - 10KB, 100KB, 1MB, 5MB
-* Tested with different function memory configurations - 512MB, 1GB, 2GB (more allocated memory results in more allocated CPU capacity [(docs)(https://docs.aws.amazon.com/lambda/latest/dg/configuration-memory.html)]). 
+* Tested with different function memory configurations - 512MB, 1GB, 2GB (more allocated memory results in more allocated CPU capacity [(docs)](https://docs.aws.amazon.com/lambda/latest/dg/configuration-memory.html)). 
 * Estimate cost deltas for processing 1,000,000 requests
 * Use gzip for data compression 
 
@@ -44,7 +44,7 @@ Both NAT Gateway and VPC Endpoint are priced per GB of data processed, so reduci
 
 ### Added duration - invocation duration delta (ms) (compressed vs uncompressed)
 
-Compressing data is a CPU intensive activity, and as such it adds function invocation duration. The following chart illustrates the measured number of milliseconds added when compressing JSON objects of various sizes with various memory allocations. E.g. compressing a 1MB JSON object took on average 124ms when function was configured with 1GB of allocated memory. 
+Compressing data is a CPU intensive activity, and as such it adds function invocation duration. The following chart illustrates the added duration in milliseconds when compressing JSON objects of various sizes with various memory allocations. E.g. compressing a 1MB JSON object with function  configured with 1GB of allocated memory took on average 124ms.
 
 |       | 512MB | 1GB | 2GB |
 | ----- | ----: | --: | --: |
@@ -55,7 +55,7 @@ Compressing data is a CPU intensive activity, and as such it adds function invoc
 
 ### Added cost - invocation duration delta cost (compressed vs uncompressed)
 
-The following chart illustrates the calculated estimate for added cost of compressing data. Continuing the example from previous chart - 1,000,000 invocations * 124ms per invocation * 1GB of allocated memory would result in 124,000 GB-seconds. 123,000 GB-seconds at $0.000013 per GB-second would cost $1.65.
+The following chart illustrates the calculated estimate for added cost of compressing data. Continuing the example from previous chart - 1,000,000 invocations * 124ms of added duration per invocation * 1GB of allocated memory would result in 124,000 GB-seconds. 124,000 GB-seconds at $0.000013 per GB-second would cost $1.65.
 
 |       | 512MB | 1GB   | 2GB   |
 | ----- | ----: | ----: | ----: |
@@ -72,9 +72,9 @@ Mean compression ratio of randomly generated JSON object was ~10-to-3, i.e. 1MB 
 
 The following chart illustrates estimated savings, or cost delta for sending uncompressed data vs compressed through NAT Gateway and VPC Endpoint. E.g. 
 * Sending 1MB concompressed payload for 1,000,000 times would result in sending 1000GB total
-* Compressing the same payload to 300KB and sending it for 1,000,000 times would result in sending 300GB total
-* The delta of transferred data is 700MB
-* When sent via NAT Gateway, 700GB * $0.045 per GB would cost $31.50
+* Compressing the same 1MB payload to 300KB and sending it for 1,000,000 times would result in sending 300GB total
+* By compressing data you can reduce total network footprint by 700MB
+* When transported through NAT Gateway, 700GB * $0.045 per GB would cost $31.50
 
 |       | NAT Gateway | VPC Endpoint (1 AZ) |
 | ----- | ----------: | -----------: |
