@@ -6,7 +6,7 @@ This sample illustrates using data compression with Lambda functions to
 
 > Important: this sample uses various AWS services and there are costs associated with these services after the Free Tier usage - please see the [AWS Pricing page](https://aws.amazon.com/pricing/) for details. You are responsible for any AWS costs incurred. No warranty is implied in this example.
 
-## How it works
+## How does it work
 
 The AWS Lambda Invoke API does not provide support for data compression. You can send requests and receive responses in plain-text formats only (such as JSON). The payload size for both request and response is limited to 6MB. 
 
@@ -22,7 +22,7 @@ See results using Postman, or similar tool. A 1MB plain text JSON payload is ret
 
 This approach can help you to send and receive payloads larger than Lambda's limit of 6MB, as long as they're less than 6MB when compressed. 
 
-## Saving on data transfer costs
+## Reducing network footprint
 
 It is common for cloud solutions residing in a VPC to invoke Lambda functions. For example an EKS-based control plane needs to invoke a series of Lambda functions. This is usually achieved through either NAT Gateway or VPC Endpoint. In this scenario, VPC Endpoint will commonly be less expensive - see [NAT Gateway pricing](https://aws.amazon.com/vpc/pricing/) and [VPC Endpoint pricing](https://aws.amazon.com/privatelink/pricing/).
 
