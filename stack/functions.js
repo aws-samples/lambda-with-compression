@@ -3,29 +3,27 @@ const { Function, Runtime, Code } = require('aws-cdk-lib/aws-lambda');
 const { Duration } = require('aws-cdk-lib');
 
 const bootstrap = (ctx) => {
-    const recieveGzipFunction = new Function(ctx, 'ReceiveGzipFunction', {
-        functionName: 'compression-demo-receive-gzip',
+    const getGzipFn = new Function(ctx, 'GetGzipFn', {
+        functionName: 'compression-demo-get-gzip',
         runtime: Runtime.NODEJS_20_X,
         handler: 'index.handler',
         memorySize: 1024,
         timeout: Duration.seconds(10),
-        code: Code.fromAsset(path.join(__dirname, '../lambda/receive-gzip'))
+        code: Code.fromAsset(path.join(__dirname, '../lambda/get-gzip'))
     });
 
-    const returnGzipFunction = new Function(ctx, 'ReturnGzipFunction', {
-        functionName: 'compression-demo-return-gzip',
+    const postGzipFn = new Function(ctx, 'PostGzipFn', {
+        functionName: 'compression-demo-post-gzip',
         runtime: Runtime.NODEJS_20_X,
         handler: 'index.handler',
         memorySize: 1024,
         timeout: Duration.seconds(10),
-        code: Code.fromAsset(path.join(__dirname, '../lambda/return-gzip'))
+        code: Code.fromAsset(path.join(__dirname, '../lambda/post-gzip'))
     });
-
-
 
     return { 
-        returnGzipFunction,
-        recieveGzipFunction
+        getGzipFn,
+        postGzipFn
     };
 
 }

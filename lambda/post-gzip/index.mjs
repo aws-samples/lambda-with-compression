@@ -4,7 +4,7 @@ export const handler = async (event) => {
     console.log(`> handler isbase64Encoded=${event.isBase64Encoded}`);
 
     const responseBody = {
-        isBase64Encoded: event.isBase64Encoded,
+        wasRequestBase64Encoded: event.isBase64Encoded,
     };
 
     const requestBody = event.body;

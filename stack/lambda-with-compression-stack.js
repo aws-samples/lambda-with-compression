@@ -1,30 +1,30 @@
 const { Stack, CfnOutput } = require('aws-cdk-lib');
 const functions = require('./functions');
 const furls = require('./furls');
+const apis = require('./apigateway');
 
 class LambdaWithCompressionStack extends Stack {
   constructor(scope, id, props) {
     super(scope, id, props);
     
     const {
-      recieveGzipFunction,
-      returnGzipFunction
+      getGzipFn,
+      postGzipFn
     } = functions.bootstrap(this);
 
     const {
-      receiveGzipFunctionFurl,
-      returnGzipFunctionFurl
-    } = furls.bootstrap(this, {
-      recieveGzipFunction, 
-      returnGzipFunction
+      getGzipFurl,
+      postGzipFurl
+    } = furls.bootstrap(this, getGzipFn, postGzipFn);
+
+    apis.bootstrap(this, getGzipFn, postGzipFn);
+
+    new CfnOutput(this, 'GetGzipFurl', {
+      value: getGzipFurl.url
     });
 
-    new CfnOutput(this, 'ReceiveGzipFunctionFurl', {
-      value: receiveGzipFunctionFurl.url
-    });
-
-    new CfnOutput(this, 'ReturnGzipFunctionFurl', {
-      value: returnGzipFunctionFurl.url
+    new CfnOutput(this, 'PostGzipFurl', {
+      value: postGzipFurl.url
     });
 
   }
