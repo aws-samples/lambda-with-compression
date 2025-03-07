@@ -4,7 +4,13 @@ const { RestApi, LambdaIntegration } = require('aws-cdk-lib/aws-apigateway');
 const bootstrap = (ctx, getGzipFn, postGzipFn) => {
     const api = new RestApi(ctx, 'CompressionDemoApi', {
         restApiName: 'compression-demo-api',
-        minCompressionSize: Size.kibibytes(1), // Enable compression for payloads >1KB
+        
+        // Enable compression for payloads >1KB
+        minCompressionSize: Size.kibibytes(1), 
+
+        // Enable treating content-type=application/gzip as binary
+        // This ensures that it is passed to the Lambda function
+        // for further decompression
         binaryMediaTypes: ["application/gzip"],
         endpointExportName: "ApiGatewayEndpoint"
     });
