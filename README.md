@@ -41,13 +41,17 @@ In this sample project, a 1MB JSON payload is received by and returned from a La
     ```
     cd lambda-with-compression
     ```
-2. From the command line, use AWS CDK to deploy the AWS resources for the pattern:
+1. Install dependencies:
+    ```
+    npm install
+    ```  
+1. Use AWS CDK to deploy the AWS resources for the pattern:
     ```
     cdk deploy
     ```
-3. Allow CDK CLI to create IAM roles with the required permissions.
+1. Allow CDK CLI to create IAM roles with the required permissions.
 
-4. Note the output from the CDK deployment process. It contain function URLs and API Gateway andpoint you can use for testing. This sample stack enforces IAM authentication for Function URL for better security. You will either need to use your AWS credentials to invoke the generated Function URL, or change the authentication type to `FunctionUrlAuthType.NONE` in `stack/functions.js`.
+1. Note the output from the CDK deployment process. It contain function URLs and API Gateway andpoint you can use for testing. This sample stack enforces IAM authentication for Function URL for better security. You will either need to use your AWS credentials to invoke the generated Function URL, or change the authentication type to `FunctionUrlAuthType.NONE` in `stack/functions.js`.
 
 ![](img/cdk-output.png)
 
@@ -55,7 +59,7 @@ In this sample project, a 1MB JSON payload is received by and returned from a La
 
 Use curl, Postman, or similar HTTP client to invoke Function URLs or API Gateway endpoints. 
 
-#### Sending GET requets with curl
+#### Sending GET requests with curl
 
 The following command will retrieve 1MB of JSON compressed to approximately 125KB. You'll need to use either the `ApiEndpoint` or `GetGzipFurl` from the CDK output. 
 
@@ -64,7 +68,7 @@ curl $ApiGatewayEndpoint -v >output.json.gz
 ```
 
 > When using Function URLs with IAM authorization enabled, you need to add authentication information with `--user $AWS_ACCESS_KEY_ID:$AWS_SECRET_ACCESS_KEY
-    --aws-sigv4 'aws:amz:us-east-1:lambda'`
+    --aws-sigv4 'aws:amz:{region}:lambda'`
 
 Note the `Content-Type`, `Content-Encoding`, and `Content-Length` headers
 
@@ -92,7 +96,7 @@ And see the response illustrating compression was used
 
 ![](img/curl-post-response.png)
 
-Note that ~130KB of gzip data becomes ~175KB when Base64 encoded. 
+Note that ~130KB of gzip binary data becomes ~175KB when Base64 encoded. 
 
 ## Reducing network footprint
 
@@ -163,7 +167,7 @@ In all test cases the savings from sending compressed data via NAT Gateway or VP
 
 ## Notes
 
-* Using other compression methods, such as [zstd](https://facebook.github.io/zstd/), may yield different results
+* Using alternative compression methods, such as [zstd](https://facebook.github.io/zstd/), may yield different results
 * For functions configured with >2GB of RAM it is important to use compression method that supports multiple vCPUs for maximum efficiency. 
 * While this experiment focused on AWS Lambda, the same technique can be applied to any other service, e.g. reducing message sizes of large messages flowing through Amazon SQS. 
 
